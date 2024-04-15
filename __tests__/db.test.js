@@ -3,6 +3,7 @@ const db = require("../db/connection");
 const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const app = require("../db/app");
+const { fetchEndpoint } = require("../db/models/model");
 
 beforeEach(() => {
   return seed(testData);
@@ -33,6 +34,20 @@ describe("/api/topics", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("ERROR! Endpoint Not Found");
+      });
+  });
+});
+
+describe("/api", () => {
+  test("responds with an object describing all endpoints", () => {
+    const expectedEndPoint = fetchEndpoint();
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        const { endpoint } = body;
+
+        expect(endpoint).toEqual(expectedEndPoint);
       });
   });
 });
