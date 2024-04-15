@@ -32,7 +32,6 @@ describe("/api/topics", () => {
       .get("/api/tupacs")
       .expect(404)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("ERROR! Endpoint Not Found");
       });
   });
