@@ -3,7 +3,7 @@ const db = require("../db/connection");
 const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const app = require("../db/app");
-const { fetchEndpoint } = require("../db/models/topics-model");
+const endPoints = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(testData);
@@ -40,14 +40,13 @@ describe("/api/topics", () => {
 
 describe("/api", () => {
   test("responds with an object describing all endpoints", () => {
-    const expectedEndPoint = fetchEndpoint();
+    const expectedEndPoint = endPoints;
     return request(app)
       .get("/api")
       .expect(200)
       .then(({ body }) => {
-        const { endpoint } = body;
-
-        expect(endpoint).toEqual(expectedEndPoint);
+        const { endpoints } = body;
+        expect(endpoints).toEqual(expectedEndPoint);
       });
   });
 });
@@ -59,6 +58,18 @@ describe("/api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
+        const expectedArticle = {
+          article_id: 4,
+          title: "Student SUES Mitch!",
+          topic: "mitch",
+          author: "rogersop",
+          body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
+          created_at: "2020-05-06T01:14:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+        expect(article).toEqual(expectedArticle);
         expect(article).toHaveProperty("author");
         expect(article).toHaveProperty("title");
         expect(article).toHaveProperty("article_id");

@@ -1,6 +1,6 @@
 const { fetchArticleId } = require("../models/articles-model");
 
-exports.getArticles = (request, response, next) => {
+exports.getSingleArticle = (request, response, next) => {
   const { article_id } = request.params;
   fetchArticleId(article_id)
     .then((article) => {
