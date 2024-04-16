@@ -3,7 +3,7 @@ const db = require("../db/connection");
 const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const app = require("../db/app");
-const { fetchEndpoint } = require("../db/models/model");
+const endpointsFile = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(testData);
@@ -40,14 +40,13 @@ describe("/api/topics", () => {
 
 describe("/api", () => {
   test("responds with an object describing all endpoints", () => {
-    const expectedEndPoint = fetchEndpoint();
+    const expectedEndPoint = endpointsFile;
     return request(app)
       .get("/api")
       .expect(200)
       .then(({ body }) => {
-        const { endpoint } = body;
-
-        expect(endpoint).toEqual(expectedEndPoint);
+        const { endpoints } = body;
+        expect(endpoints).toEqual(expectedEndPoint);
       });
   });
 });

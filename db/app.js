@@ -4,8 +4,6 @@ const { getTopics, getEndpoints } = require("../db/controllers/controller");
 
 app.get("/api/topics", getTopics);
 
-app.use(express.json());
-
 app.get("/api", getEndpoints);
 
 app.use((request, response, next) => {
