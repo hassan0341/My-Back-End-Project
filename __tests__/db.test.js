@@ -89,4 +89,34 @@ describe("/api/articles", () => {
         expect(msg).toBe("error! ID not found");
       });
   });
+  test("GET 200: responds with an array of article objects sorted by date in descending order by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles.length).toBe(13);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+        articles.forEach((article) => {
+          expect(article).not.toHaveProperty("body");
+          expect(article).toHaveProperty("author");
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("comment_count");
+          expect(typeof article.comment_count).toBe("number");
+        });
+      });
+  });
+  test("GET 404: responds with not found when wrong endpoint is entered", () => {
+    return request(app)
+      .get("/api/articoles")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ERROR! Endpoint Not Found");
+      });
+  });
 });
