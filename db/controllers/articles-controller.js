@@ -1,8 +1,10 @@
+const { response } = require("../app");
 const {
   fetchArticleId,
   fetchArticles,
   fetchCommentsByArticleId,
   checkArticleExists,
+  insertComment,
 } = require("../models/articles-model");
 
 exports.getSingleArticle = (request, response, next) => {
@@ -30,6 +32,18 @@ exports.getCommentsByArticleId = (request, response, next) => {
   ])
     .then(([comments]) => {
       response.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postCommentByArticleId = (request, response, next) => {
+  const { article_id } = request.params;
+  const newComment = request.body;
+  insertComment(article_id, newComment)
+    .then((comment) => {
+      response.status(201).send({ comment });
     })
     .catch((err) => {
       next(err);
