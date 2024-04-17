@@ -41,3 +41,23 @@ exports.checkArticleExists = (article_id) => {
       }
     });
 };
+
+exports.insertComment = (article_id, newComment) => {
+  const { body, username } = newComment;
+
+  if ((!body, !username)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad request! Missing required fields",
+    });
+  }
+
+  return db
+    .query(
+      "INSERT INTO comments (article_id, body, author) VALUES ($1, $2, $3) RETURNING *",
+      [article_id, body, username]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};

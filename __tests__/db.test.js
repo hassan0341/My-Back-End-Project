@@ -144,6 +144,7 @@ describe("/api/articles", () => {
           },
         ];
         const { comments } = body;
+        expect(comments.length).toBe(2);
         expect(comments).toEqual(expectedComments);
       });
   });
@@ -163,6 +164,49 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toBe("error! ID not found");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("POST 201: responds with the newly posted comment", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "i am the body in the body",
+    };
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.body).toBe("i am the body in the body");
+      });
+  });
+  test("POST 400: responds with error when request is missing properties", () => {
+    const sendObj = {};
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(sendObj)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request! Missing required fields");
+      });
+  });
+  test("POST 404: responds with an error when wrong endpoint inserted", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "i am the body in the body",
+    };
+    return request(app)
+      .post("/api/articoles/5/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("ERROR! Endpoint Not Found");
       });
   });
 });

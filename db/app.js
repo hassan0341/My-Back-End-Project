@@ -5,6 +5,7 @@ const {
   getSingleArticle,
   getArticles,
   getCommentsByArticleId,
+  postCommentByArticleId,
 } = require("./controllers/articles-controller");
 
 app.get("/api/topics", getTopics);
@@ -16,6 +17,10 @@ app.get("/api/articles/:article_id", getSingleArticle);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.get("/api", getEndpoints);
+
+app.use(express.json());
+
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.use((err, request, response, next) => {
   if (err.status && err.msg) {
