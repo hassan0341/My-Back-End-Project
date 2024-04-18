@@ -257,3 +257,27 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("DELETE 204: responds with no content for ID inputted", () => {
+    return request(app).delete("/api/comments/15").expect(204);
+  });
+  test(`DELETE 404: responds with an error when ID doesn't exist`, () => {
+    return request(app)
+      .delete("/api/comments/150")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe(`ERROR! this comment doesn't exist`);
+      });
+  });
+  test(`DELETE 400: responds with an error when ID is of invalid format`, () => {
+    return request(app)
+      .delete("/api/comments/banana")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe(`Bad request! Invalid ID format`);
+      });
+  });
+});
