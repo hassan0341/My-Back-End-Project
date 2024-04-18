@@ -166,6 +166,27 @@ describe("GET /api/articles", () => {
         expect(msg).toBe("error! ID not found");
       });
   });
+  test("GET 200: responds with articles filtered by topics", () => {
+    return request(app)
+      .get(`/api/articles?topic=cats`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles.length).toBeGreaterThan(0);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("cats");
+        });
+      });
+  });
+  test(`GET 404: responds with error when topic inserted doesn't exist`, () => {
+    return request(app)
+      .get(`/api/articles?topic=planets`)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("ERROR! Topic not found!");
+      });
+  });
 });
 
 describe("POST /api/articles/:article_id/comments", () => {

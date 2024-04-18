@@ -11,14 +11,24 @@ exports.fetchArticleId = (article_id) => {
     });
 };
 
-exports.fetchArticles = () => {
-  return db
-    .query(
-      "SELECT a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url, CAST(COUNT(c.comment_id) AS INT) AS comment_count FROM articles AS a LEFT JOIN comments AS c ON a.article_id = c.article_id GROUP BY a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url ORDER BY created_at desc;"
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.fetchArticles = (topic) => {
+  let queryStr = `SELECT a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url, CAST(COUNT(c.comment_id) AS INT) AS comment_count FROM articles AS a LEFT JOIN comments AS c ON a.article_id = c.article_id`;
+  let queryVal = [];
+
+  if (topic) {
+    queryStr += ` WHERE topic = $1`;
+    queryVal.push(topic);
+  }
+
+  queryStr += ` GROUP BY a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url`;
+  queryStr += ` ORDER BY created_at desc`;
+
+  return db.query(queryStr, queryVal).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "ERROR! Topic not found!" });
+    }
+    return rows;
+  });
 };
 
 exports.fetchCommentsByArticleId = (article_id) => {
