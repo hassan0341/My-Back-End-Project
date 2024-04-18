@@ -6,6 +6,7 @@ const {
   checkArticleExists,
   insertComment,
   changeArticleById,
+  removeCommentById,
 } = require("../models/articles-model");
 
 exports.getSingleArticle = (request, response, next) => {
@@ -58,6 +59,17 @@ exports.patchArticleById = (request, response, next) => {
   changeArticleById(article_id, inc_votes)
     .then((article) => {
       response.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteCommentById = (request, response, next) => {
+  const { comment_id } = request.params;
+  removeCommentById(comment_id)
+    .then((treasure) => {
+      response.status(204).send({ treasure });
     })
     .catch((err) => {
       next(err);
