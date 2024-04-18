@@ -245,7 +245,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(msg).toBe("ERROR! Missing required data");
       });
   });
-  test("POST 404: responds with an error when wrong endpoint inserted", () => {
+  test("PATCH 404: responds with an error when wrong endpoint inserted", () => {
     const updatedArticle = { inc_votes: 20 };
     return request(app)
       .patch("/api/articoles/5")
