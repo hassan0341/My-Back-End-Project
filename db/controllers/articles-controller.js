@@ -21,9 +21,14 @@ exports.getSingleArticle = (request, response, next) => {
 };
 
 exports.getArticles = (request, response, next) => {
-  fetchArticles().then((articles) => {
-    response.status(200).send({ articles });
-  });
+  const { topic } = request.query;
+  fetchArticles(topic)
+    .then((articles) => {
+      response.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getCommentsByArticleId = (request, response, next) => {
