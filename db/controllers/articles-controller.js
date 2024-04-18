@@ -5,6 +5,7 @@ const {
   fetchCommentsByArticleId,
   checkArticleExists,
   insertComment,
+  changeArticleById,
 } = require("../models/articles-model");
 
 exports.getSingleArticle = (request, response, next) => {
@@ -44,6 +45,19 @@ exports.postCommentByArticleId = (request, response, next) => {
   insertComment(article_id, newComment)
     .then((comment) => {
       response.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchArticleById = (request, response, next) => {
+  const { article_id } = request.params;
+  const { inc_votes } = request.body;
+
+  changeArticleById(article_id, inc_votes)
+    .then((article) => {
+      response.status(200).send({ article });
     })
     .catch((err) => {
       next(err);
