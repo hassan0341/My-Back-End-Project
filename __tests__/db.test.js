@@ -13,7 +13,7 @@ afterAll(() => {
   db.end;
 });
 
-describe("/api/topics", () => {
+describe("GET /api/topics", () => {
   test("GET 200: responds with an array of topic objects", () => {
     return request(app)
       .get("/api/topics")
@@ -38,7 +38,7 @@ describe("/api/topics", () => {
   });
 });
 
-describe("/api", () => {
+describe("GET /api", () => {
   test("responds with an object describing all endpoints", () => {
     const expectedEndPoint = endPoints;
     return request(app)
@@ -51,7 +51,7 @@ describe("/api", () => {
   });
 });
 
-describe("/api/articles", () => {
+describe("GET /api/articles", () => {
   test("GET 200: responds with an article object by ID", () => {
     return request(app)
       .get("/api/articles/4")
@@ -203,6 +203,53 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articoles/5/comments")
       .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("ERROR! Endpoint Not Found");
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("PATCH 200: responds with the updated article", () => {
+    const updatedArticle = { inc_votes: 20 };
+    const expectedArticle = {
+      article_id: 5,
+      title: "UNCOVERED: catspiracy to bring down democracy",
+      topic: "cats",
+      author: "rogersop",
+      body: "Bastet walks amongst us, and the cats are taking arms!",
+      created_at: "2020-08-03T13:14:00.000Z",
+      votes: 20,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .patch("/api/articles/5")
+      .send(updatedArticle)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toEqual(expectedArticle);
+      });
+  });
+  test(`PATCH 400: responds with error when patch request is missing required data`, () => {
+    const updatedArticle = {};
+    request(app)
+      .patch("/api/articles/5")
+      .send(updatedArticle)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("ERROR! Missing required data");
+      });
+  });
+  test("PATCH 404: responds with an error when wrong endpoint inserted", () => {
+    const updatedArticle = { inc_votes: 20 };
+    return request(app)
+      .patch("/api/articoles/5")
+      .send(updatedArticle)
       .expect(404)
       .then(({ body }) => {
         const { msg } = body;

@@ -61,3 +61,20 @@ exports.insertComment = (article_id, newComment) => {
       return rows[0];
     });
 };
+
+exports.changeArticleById = (article_id, inc_votes) => {
+  if (inc_votes === undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: "ERROR! Missing required data",
+    });
+  }
+  return db
+    .query(
+      `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`,
+      [inc_votes, article_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
