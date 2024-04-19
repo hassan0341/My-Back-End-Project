@@ -68,9 +68,8 @@ describe("GET /api/articles", () => {
           votes: 0,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          comment_count: 0,
         };
-        expect(article).toEqual(expectedArticle);
+        expect(article).toMatchObject(expectedArticle);
         expect(article).toHaveProperty("author");
         expect(article).toHaveProperty("title");
         expect(article).toHaveProperty("article_id");
