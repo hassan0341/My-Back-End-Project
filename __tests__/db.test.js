@@ -68,6 +68,7 @@ describe("GET /api/articles", () => {
           votes: 0,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 0,
         };
         expect(article).toEqual(expectedArticle);
         expect(article).toHaveProperty("author");
@@ -185,6 +186,15 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toBe("ERROR! Topic not found!");
+      });
+  });
+  test("GET 200: responds with articles object by ID with now a new property of comment_count", () => {
+    return request(app)
+      .get(`/api/articles/4`)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.comment_count).toBe(0);
       });
   });
 });
