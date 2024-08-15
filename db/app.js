@@ -34,15 +34,15 @@ app.patch("/api/articles/:article_id", patchArticleById);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
+app.all("*", (req, res, next) => {
+  res.status(404).send({ msg: "ERROR! Endpoint Not Found" });
+});
+
 app.use((err, request, response, next) => {
   if (err.status && err.msg) {
     response.status(err.status).send({ msg: err.msg });
   }
   next(err);
-});
-
-app.use((request, response, next) => {
-  response.status(404).send({ msg: "ERROR! Endpoint Not Found" });
 });
 
 module.exports = app;
