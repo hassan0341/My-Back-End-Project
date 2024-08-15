@@ -20,20 +20,11 @@ describe("GET /api/topics", () => {
       .expect(200)
       .then(({ body }) => {
         const { topics } = body;
-
         expect(topics.length).toBe(3);
         topics.forEach((topic) => {
           expect(topic).toHaveProperty("description");
           expect(topic).toHaveProperty("slug");
         });
-      });
-  });
-  test("GET 404: responds with not found when wrong endpoint is entered", () => {
-    return request(app)
-      .get("/api/tupacs")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("ERROR! Endpoint Not Found");
       });
   });
 });
@@ -110,14 +101,6 @@ describe("GET /api/articles", () => {
           expect(article).toHaveProperty("comment_count");
           expect(typeof article.comment_count).toBe("number");
         });
-      });
-  });
-  test("GET 404: responds with not found when wrong endpoint is entered", () => {
-    return request(app)
-      .get("/api/articoles")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("ERROR! Endpoint Not Found");
       });
   });
   test("GET 200: responds with array of comments for given article ID", () => {
@@ -327,9 +310,12 @@ describe(`GET /api/users`, () => {
         });
       });
   });
-  test("GET 404: responds with error when endpoint doesn't exist", () => {
+});
+
+describe("Undeclared endpoints", () => {
+  test("ALL METHODS 404: Responds with an error for an endpoint not found", () => {
     return request(app)
-      .get("/api/im_not_here")
+      .get("/api/nothere")
       .expect(404)
       .then(({ body }) => {
         const { msg } = body;
