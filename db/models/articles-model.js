@@ -15,7 +15,7 @@ exports.fetchArticleId = (article_id) => {
 };
 
 exports.fetchArticles = (topic) => {
-  let queryStr = `SELECT a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url, CAST(COUNT(c.comment_id) AS INT) AS comment_count FROM articles AS a LEFT JOIN comments AS c ON a.article_id = c.article_id`;
+  let queryStr = `SELECT a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url, CAST(COUNT(c.comment_id) AS INT) AS comment_count FROM articles a LEFT JOIN comments c ON a.article_id = c.article_id`;
   let queryVal = [];
 
   if (topic) {
