@@ -89,6 +89,15 @@ describe("GET /api/articles/:article_id", () => {
         expect(msg).toBe("error! ID not found");
       });
   });
+  test("GET 400: responds with an error when passed an invalid ID type", () => {
+    return request(app)
+      .get("/api/articles/mars")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
@@ -136,6 +145,15 @@ describe("GET /api/articles/:article_id/comments", () => {
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toBe("error! ID not found");
+      });
+  });
+  test("GET 400: responds with an error when passed an invalid ID type", () => {
+    return request(app)
+      .get("/api/articles/mars/comments")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
       });
   });
 });
