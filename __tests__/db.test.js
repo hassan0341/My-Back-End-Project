@@ -347,7 +347,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       .expect(400)
       .then(({ body }) => {
         const { msg } = body;
-        expect(msg).toBe(`Bad request! Invalid ID format`);
+        expect(msg).toBe(`Bad request`);
       });
   });
 });
