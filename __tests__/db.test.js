@@ -282,6 +282,39 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(msg).toBe("ERROR! Missing required data");
       });
   });
+  test(`PATCH 400: responds with an error when patch request property is of invalid type`, () => {
+    const updatedArticle = { inc_votes: "invalid" };
+    return request(app)
+      .patch("/api/articles/5")
+      .send(updatedArticle)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test(`PATCH 400: responds with an error when invalid ID is passed`, () => {
+    const updatedArticle = { inc_votes: 20 };
+    return request(app)
+      .patch("/api/articles/cars")
+      .send(updatedArticle)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test(`PATCH 404: responds with an error when valid ID is passed, but does not exist in database`, () => {
+    const updatedArticle = { inc_votes: 20 };
+    return request(app)
+      .patch("/api/articles/500")
+      .send(updatedArticle)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("ID does not exist");
+      });
+  });
   test("PATCH 404: responds with an error when wrong endpoint inserted", () => {
     const updatedArticle = { inc_votes: 20 };
     return request(app)
