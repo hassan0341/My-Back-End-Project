@@ -73,8 +73,8 @@ exports.patchArticleById = (request, response, next) => {
 exports.deleteCommentById = (request, response, next) => {
   const { comment_id } = request.params;
   removeCommentById(comment_id)
-    .then((treasure) => {
-      response.status(204).send({ treasure });
+    .then(() => {
+      response.sendStatus(204);
     })
     .catch((err) => {
       next(err);
