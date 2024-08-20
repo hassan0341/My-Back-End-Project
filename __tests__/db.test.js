@@ -4,6 +4,7 @@ const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const app = require("../db/app");
 const endPoints = require("../endpoints.json");
+const Test = require("supertest/lib/test");
 
 beforeEach(() => {
   return seed(testData);
@@ -375,6 +376,25 @@ describe(`GET /api/users`, () => {
           expect(user).toHaveProperty("name");
           expect(user).toHaveProperty("avatar_url");
         });
+      });
+  });
+});
+
+describe("GET /api/users/:username", () => {
+  test("GET 200: responds with a user by username inputted by the client", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        const { user } = body;
+        expect(user).toHaveProperty("username");
+        expect(user).toHaveProperty("avatar_url");
+        expect(user).toHaveProperty("name");
+        expect(user.username).toBe("butter_bridge");
+        expect(user.name).toBe("jonny");
+        expect(user.avatar_url).toBe(
+          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        );
       });
   });
 });
