@@ -7,6 +7,7 @@ const {
   insertComment,
   changeArticleById,
   removeCommentById,
+  checkTopicExists,
 } = require("../models/articles-model");
 
 exports.getSingleArticle = (request, response, next) => {
@@ -22,8 +23,13 @@ exports.getSingleArticle = (request, response, next) => {
 
 exports.getArticles = (request, response, next) => {
   const { topic } = request.query;
-  fetchArticles(topic)
-    .then((articles) => {
+
+  const articlePromise = fetchArticles(topic);
+
+  const topicPromise = topic ? checkTopicExists(topic) : Promise.resolve();
+
+  Promise.all([articlePromise, topicPromise])
+    .then(([articles]) => {
       response.status(200).send({ articles });
     })
     .catch((err) => {
