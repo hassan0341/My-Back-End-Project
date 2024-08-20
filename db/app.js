@@ -1,38 +1,25 @@
 const cors = require("cors");
 const express = require("express");
 const app = express();
-const { getTopics, getEndpoints } = require("./controllers/topics-controller");
-const {
-  getSingleArticle,
-  getArticles,
-  getCommentsByArticleId,
-  postCommentByArticleId,
-  patchArticleById,
-  deleteCommentById,
-} = require("./controllers/articles-controller");
-const { getUsers } = require("./controllers/users-controller");
+
+const topicsRouter = require("../routes/topics-router");
+const articlesRouter = require("../routes/articles-router");
+const usersRouter = require("../routes/users-router");
+const commentsRouter = require("../routes/comments-router");
+const endpointsRouter = require("../routes/endpoints-router");
 
 app.use(cors());
-
-app.get("/api/topics", getTopics);
-
-app.get("/api/articles", getArticles);
-
-app.get("/api/articles/:article_id", getSingleArticle);
-
-app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
-
-app.get("/api", getEndpoints);
-
-app.get(`/api/users`, getUsers);
-
 app.use(express.json());
 
-app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+app.use("/api/topics", topicsRouter);
 
-app.patch("/api/articles/:article_id", patchArticleById);
+app.use("/api/articles", articlesRouter);
 
-app.delete("/api/comments/:comment_id", deleteCommentById);
+app.use(`/api/users`, usersRouter);
+
+app.use("/api/comments", commentsRouter);
+
+app.use("/api", endpointsRouter);
 
 app.all("*", (req, res, next) => {
   res.status(404).send({ msg: "ERROR! Endpoint Not Found" });
