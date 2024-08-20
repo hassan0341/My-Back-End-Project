@@ -397,6 +397,15 @@ describe("GET /api/users/:username", () => {
         );
       });
   });
+  test("GET 404: responds with an error when username is of valid type but not present in the database", () => {
+    return request(app)
+      .get("/api/users/bluecar")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Error!, user not found");
+      });
+  });
 });
 
 describe("Undeclared endpoints", () => {
