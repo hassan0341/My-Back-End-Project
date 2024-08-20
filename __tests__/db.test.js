@@ -408,6 +408,72 @@ describe("GET /api/users/:username", () => {
   });
 });
 
+describe("PATCH /api/comments/:comment_id", () => {
+  test("PATCH 200: responds with the updated comment", () => {
+    const patch = { inc_votes: 10 };
+    const expectComment = {
+      comment_id: 1,
+      body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      votes: 26,
+      author: "butter_bridge",
+      article_id: 9,
+      created_at: "2020-04-06T12:17:00.000Z",
+    };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(patch)
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+
+        expect(comment).toEqual(expectComment);
+      });
+  });
+  test(`PATCH 400: responds with error when patch request is missing required data`, () => {
+    const patch = {};
+    request(app)
+      .patch("/api/comments/1")
+      .send(patch)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("ERROR! Missing required data");
+      });
+  });
+  test(`PATCH 400: responds with an error when patch request property is of invalid type`, () => {
+    const patch = { inc_votes: "invalid" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(patch)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test(`PATCH 400: responds with an error when invalid ID is passed`, () => {
+    const patch = { inc_votes: 20 };
+    return request(app)
+      .patch("/api/comments/you")
+      .send(patch)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test(`PATCH 404: responds with an error when valid ID is passed, but does not exist in database`, () => {
+    const updatedArticle = { inc_votes: 20 };
+    return request(app)
+      .patch("/api/comments/500")
+      .send(updatedArticle)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("ID does not exist");
+      });
+  });
+});
 describe("Undeclared endpoints", () => {
   test("ALL METHODS 404: Responds with an error for an endpoint not found", () => {
     return request(app)
