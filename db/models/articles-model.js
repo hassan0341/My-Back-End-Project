@@ -27,9 +27,6 @@ exports.fetchArticles = (topic) => {
   queryStr += ` ORDER BY created_at desc`;
 
   return db.query(queryStr, queryVal).then(({ rows }) => {
-    if (rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "ERROR! Topic not found!" });
-    }
     return rows;
   });
 };
@@ -51,6 +48,16 @@ exports.checkArticleExists = (article_id) => {
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "error! ID not found" });
+      }
+    });
+};
+
+exports.checkTopicExists = (topic) => {
+  return db
+    .query(`SELECT * FROM topics WHERE slug = $1`, [topic])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "ERROR! Topic not found!" });
       }
     });
 };

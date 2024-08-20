@@ -194,6 +194,15 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("GET 200: Responds with an empty array when there are no associated articles with the topic", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(0);
+      });
+  });
   test(`GET 404: responds with error when topic inserted doesn't exist`, () => {
     return request(app)
       .get(`/api/articles?topic=planets`)
