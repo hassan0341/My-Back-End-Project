@@ -4,7 +4,6 @@ const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const app = require("../db/app");
 const endPoints = require("../endpoints.json");
-const Test = require("supertest/lib/test");
 
 beforeEach(() => {
   return seed(testData);
@@ -167,7 +166,7 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-
+        console.log(articles);
         expect(articles.length).toBe(13);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
@@ -474,6 +473,62 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  test("POST 201: Responds with the newly posted article", () => {
+    const post = {
+      author: "butter_bridge",
+      title: "all tomorrows",
+      body: "i am the one who knocks",
+      topic: "cats",
+      article_img_url:
+        "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(post)
+      .expect(201)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toEqual({
+          ...post,
+          article_id: expect.any(Number),
+          votes: 0,
+          created_at: expect.any(String),
+          comment_count: "0",
+        });
+      });
+  });
+  test("POST 400: Responds with and error when required fields are missing", () => {
+    const post = {};
+    return request(app)
+      .post("/api/articles")
+      .send(post)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: Responds with and error when failing schema validation", () => {
+    const post = {
+      author: 7,
+      title: 8,
+      body: 8,
+      topic: 8,
+      article_img_url: 8,
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(post)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+});
+
 describe("Undeclared endpoints", () => {
   test("ALL METHODS 404: Responds with an error for an endpoint not found", () => {
     return request(app)

@@ -118,3 +118,25 @@ exports.removeCommentById = (comment_id) => {
       return rows[0];
     });
 };
+
+exports.addArticles = (newArticle) => {
+  const { author, title, body, topic, article_img_url } = newArticle;
+
+  return db
+    .query(
+      `INSERT INTO articles (author, title, body, topic, article_img_url, votes, created_at) VALUES ($1, $2, $3, $4, $5, 0, NOW()) RETURNING *,
+      (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count
+      `,
+      [
+        author,
+        title,
+        body,
+        topic,
+        article_img_url ||
+          "https://www.istockphoto.com/vector/image-coming-soon-no-photo-no-thumbnail-image-available-vector-illustration-gm1396814518-451440720",
+      ]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
