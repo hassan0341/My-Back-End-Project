@@ -495,7 +495,7 @@ describe("POST /api/articles", () => {
           article_id: expect.any(Number),
           votes: 0,
           created_at: expect.any(String),
-          comment_count: "0",
+          comment_count: 0,
         });
       });
   });

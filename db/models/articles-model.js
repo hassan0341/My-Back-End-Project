@@ -125,7 +125,7 @@ exports.addArticles = (newArticle) => {
   return db
     .query(
       `INSERT INTO articles (author, title, body, topic, article_img_url, votes, created_at) VALUES ($1, $2, $3, $4, $5, 0, NOW()) RETURNING *,
-      (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count
+      (SELECT COUNT(*)::int FROM comments WHERE comments.article_id = articles.article_id) AS comment_count
       `,
       [
         author,
