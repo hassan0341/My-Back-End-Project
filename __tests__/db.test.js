@@ -139,7 +139,27 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(comments).toHaveLength(0);
       });
   });
-  test("GET 404: responds with error then the ID is non-existent", () => {
+  //test("GET 200: Returns comment of correct amount when limit and page query applied", () => {
+  //return request(app)
+  //  .get("/api/articles/5/comments?limit=1&p=2")
+  //  .expect(200)
+  //  .then(({ body }) => {
+  //  const expectedComment = [
+  //     {
+  //     comment_id: 15,
+  ///     votes: 1,
+  //     created_at: "2020-11-24T00:08:00.000Z",
+  //      author: "butter_bridge",
+  //      body: "I am 100% sure that we're not completely sure.",
+  //      article_id: 5,
+  //     },
+  //   ];
+  //   const { comments } = body;
+  //   expect(comments.length).toBe(1);
+  //   expect(comments).toEqual(expectedComment);
+  // });
+  // });
+  test("GET 404: Responds with error then the ID is non-existent", () => {
     return request(app)
       .get("/api/articles/83/comments")
       .expect(404)
@@ -148,7 +168,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(msg).toBe("error! ID not found");
       });
   });
-  test("GET 400: responds with an error when passed an invalid ID type", () => {
+  test("GET 400: Responds with an error when passed an invalid ID type", () => {
     return request(app)
       .get("/api/articles/mars/comments")
       .expect(400)
@@ -204,7 +224,7 @@ describe("GET /api/articles", () => {
         expect(articles).toHaveLength(0);
       });
   });
-  test("GET 200: returns articles with default limit of 10", () => {
+  test("GET 200: Returns articles with default limit of 10", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -216,7 +236,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("GET 200: returns articles of correct amount when limit query applied", () => {
+  test("GET 200: Returns articles of correct amount when limit query applied", () => {
     return request(app)
       .get("/api/articles?limit=3")
       .expect(200)
@@ -228,7 +248,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("GET 200: Responds with the correct articles for a specific page", () => {
+  test("GET 200: Responds with the correct articles for a specific limit and page", () => {
     return request(app)
       .get("/api/articles?limit=5&p=2")
       .expect(200)
