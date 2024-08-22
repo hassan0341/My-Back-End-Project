@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 describe("GET /api", () => {
-  test("responds with an object describing all endpoints", () => {
+  test("Responds with an object describing all endpoints", () => {
     const expectedEndPoint = endPoints;
     return request(app)
       .get("/api")
@@ -28,7 +28,7 @@ describe("GET /api", () => {
 });
 
 describe("GET /api/topics", () => {
-  test("GET 200: responds with an array of topic objects", () => {
+  test("GET 200: Responds with an array of topic objects", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -44,7 +44,7 @@ describe("GET /api/topics", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  test("GET 200: responds with an article object by ID", () => {
+  test("GET 200: Responds with an article object by ID", () => {
     return request(app)
       .get("/api/articles/4")
       .expect(200)
@@ -72,7 +72,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(article).toHaveProperty("article_img_url");
       });
   });
-  test("GET 200: responds with articles object by ID with now a new property of comment_count", () => {
+  test("GET 200: Responds with articles object by ID with now a new property of comment_count", () => {
     return request(app)
       .get(`/api/articles/4`)
       .expect(200)
@@ -90,7 +90,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(msg).toBe("error! ID not found");
       });
   });
-  test("GET 400: responds with an error when passed an invalid ID type", () => {
+  test("GET 400: Responds with an error when passed an invalid ID type", () => {
     return request(app)
       .get("/api/articles/mars")
       .expect(400)
@@ -102,7 +102,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
-  test("GET 200: responds with array of comments for given article ID", () => {
+  test("GET 200: Responds with array of comments for given article ID", () => {
     return request(app)
       .get("/api/articles/5/comments")
       .expect(200)
@@ -160,14 +160,14 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 describe("GET /api/articles", () => {
-  test("GET 200: responds with an array of article objects sorted by date in descending order by default", () => {
+  test("GET 200: Responds with an array of article objects sorted by date in descending order by default", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
 
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
           expect(article).not.toHaveProperty("body");
@@ -183,7 +183,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("GET 200: responds with articles filtered by topics", () => {
+  test("GET 200: Responds with articles filtered by topics", () => {
     return request(app)
       .get(`/api/articles?topic=cats`)
       .expect(200)
@@ -204,7 +204,58 @@ describe("GET /api/articles", () => {
         expect(articles).toHaveLength(0);
       });
   });
-  test(`GET 404: responds with error when topic inserted doesn't exist`, () => {
+  test("GET 200: returns articles with default limit of 10", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(10);
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("total_count");
+        });
+      });
+  });
+  test("GET 200: returns articles of correct amount when limit query applied", () => {
+    return request(app)
+      .get("/api/articles?limit=3")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(3);
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("total_count");
+        });
+      });
+  });
+  test("GET 200: Responds with the correct articles for a specific page", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(5);
+      });
+  });
+  test("GET 200: Responds with an empty array when limit or page don't exist in database", () => {
+    return request(app)
+      .get("/api/articles?limit=999&p=999")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toEqual([]);
+      });
+  });
+  test("GET 400: Responds with an error when invalid limit or page inserted", () => {
+    return request(app)
+      .get("/api/articles?limit=abc&p=lul")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test(`GET 404: Responds with error when topic inserted doesn't exist`, () => {
     return request(app)
       .get(`/api/articles?topic=planets`)
       .expect(404)
@@ -216,7 +267,7 @@ describe("GET /api/articles", () => {
 });
 
 describe("POST /api/articles/:article_id/comments", () => {
-  test("POST 201: responds with the newly posted comment", () => {
+  test("POST 201: Responds with the newly posted comment", () => {
     const newComment = {
       username: "butter_bridge",
       body: "i am the body in the body",
@@ -231,7 +282,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(comment.body).toBe("i am the body in the body");
       });
   });
-  test("POST 400: responds with error when request is missing properties", () => {
+  test("POST 400: Responds with error when request is missing properties", () => {
     const sendObj = {};
     return request(app)
       .post("/api/articles/5/comments")
@@ -242,7 +293,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(msg).toBe("Bad request! Missing required fields");
       });
   });
-  test("POST 404: responds with an error when wrong endpoint inserted", () => {
+  test("POST 404: Responds with an error when wrong endpoint inserted", () => {
     const newComment = {
       username: "butter_bridge",
       body: "i am the body in the body",
@@ -259,7 +310,7 @@ describe("POST /api/articles/:article_id/comments", () => {
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  test("PATCH 200: responds with the updated article", () => {
+  test("PATCH 200: Responds with the updated article", () => {
     const updatedArticle = { inc_votes: 20 };
     const expectedArticle = {
       article_id: 5,
@@ -281,7 +332,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(article).toEqual(expectedArticle);
       });
   });
-  test(`PATCH 400: responds with error when patch request is missing required data`, () => {
+  test(`PATCH 400: Responds with error when patch request is missing required data`, () => {
     const updatedArticle = {};
     request(app)
       .patch("/api/articles/5")
@@ -292,7 +343,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(msg).toBe("ERROR! Missing required data");
       });
   });
-  test(`PATCH 400: responds with an error when patch request property is of invalid type`, () => {
+  test(`PATCH 400: Responds with an error when patch request property is of invalid type`, () => {
     const updatedArticle = { inc_votes: "invalid" };
     return request(app)
       .patch("/api/articles/5")
@@ -303,7 +354,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(msg).toBe("Bad request");
       });
   });
-  test(`PATCH 400: responds with an error when invalid ID is passed`, () => {
+  test(`PATCH 400: Responds with an error when invalid ID is passed`, () => {
     const updatedArticle = { inc_votes: 20 };
     return request(app)
       .patch("/api/articles/cars")
@@ -314,7 +365,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(msg).toBe("Bad request");
       });
   });
-  test(`PATCH 404: responds with an error when valid ID is passed, but does not exist in database`, () => {
+  test(`PATCH 404: Responds with an error when valid ID is passed, but does not exist in database`, () => {
     const updatedArticle = { inc_votes: 20 };
     return request(app)
       .patch("/api/articles/500")
@@ -325,7 +376,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(msg).toBe("ID does not exist");
       });
   });
-  test("PATCH 404: responds with an error when wrong endpoint inserted", () => {
+  test("PATCH 404: Responds with an error when wrong endpoint inserted", () => {
     const updatedArticle = { inc_votes: 20 };
     return request(app)
       .patch("/api/articoles/5")
@@ -339,10 +390,10 @@ describe("PATCH /api/articles/:article_id", () => {
 });
 
 describe("DELETE /api/comments/:comment_id", () => {
-  test("DELETE 204: responds with no content for ID inputted", () => {
+  test("DELETE 204: Responds with no content for ID inputted", () => {
     return request(app).delete("/api/comments/15").expect(204);
   });
-  test(`DELETE 404: responds with an error when ID doesn't exist`, () => {
+  test(`DELETE 404: Responds with an error when ID doesn't exist`, () => {
     return request(app)
       .delete("/api/comments/150")
       .expect(404)
@@ -351,7 +402,7 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(msg).toBe(`ERROR! this comment doesn't exist`);
       });
   });
-  test(`DELETE 400: responds with an error when ID is of invalid format`, () => {
+  test(`DELETE 400: Responds with an error when ID is of invalid format`, () => {
     return request(app)
       .delete("/api/comments/banana")
       .expect(400)
@@ -363,7 +414,7 @@ describe("DELETE /api/comments/:comment_id", () => {
 });
 
 describe(`GET /api/users`, () => {
-  test("GET 200: responds with an array of user objects", () => {
+  test("GET 200: Responds with an array of user objects", () => {
     return request(app)
       .get(`/api/users`)
       .expect(200)
@@ -380,7 +431,7 @@ describe(`GET /api/users`, () => {
 });
 
 describe("GET /api/users/:username", () => {
-  test("GET 200: responds with a user by username inputted by the client", () => {
+  test("GET 200: Responds with a user by username inputted by the client", () => {
     return request(app)
       .get("/api/users/butter_bridge")
       .expect(200)
@@ -396,7 +447,7 @@ describe("GET /api/users/:username", () => {
         );
       });
   });
-  test("GET 404: responds with an error when username is of valid type but not present in the database", () => {
+  test("GET 404: Responds with an error when username is of valid type but not present in the database", () => {
     return request(app)
       .get("/api/users/bluecar")
       .expect(404)
@@ -408,7 +459,7 @@ describe("GET /api/users/:username", () => {
 });
 
 describe("PATCH /api/comments/:comment_id", () => {
-  test("PATCH 200: responds with the updated comment", () => {
+  test("PATCH 200: Responds with the updated comment", () => {
     const patch = { inc_votes: 10 };
     const expectComment = {
       comment_id: 1,
@@ -428,7 +479,7 @@ describe("PATCH /api/comments/:comment_id", () => {
         expect(comment).toEqual(expectComment);
       });
   });
-  test(`PATCH 400: responds with error when patch request is missing required data`, () => {
+  test(`PATCH 400: Responds with error when patch request is missing required data`, () => {
     const patch = {};
     request(app)
       .patch("/api/comments/1")
@@ -439,7 +490,7 @@ describe("PATCH /api/comments/:comment_id", () => {
         expect(msg).toBe("ERROR! Missing required data");
       });
   });
-  test(`PATCH 400: responds with an error when patch request property is of invalid type`, () => {
+  test(`PATCH 400: Responds with an error when patch request property is of invalid type`, () => {
     const patch = { inc_votes: "invalid" };
     return request(app)
       .patch("/api/comments/1")
@@ -450,7 +501,7 @@ describe("PATCH /api/comments/:comment_id", () => {
         expect(msg).toBe("Bad request");
       });
   });
-  test(`PATCH 400: responds with an error when invalid ID is passed`, () => {
+  test(`PATCH 400: Responds with an error when invalid ID is passed`, () => {
     const patch = { inc_votes: 20 };
     return request(app)
       .patch("/api/comments/you")
@@ -461,7 +512,7 @@ describe("PATCH /api/comments/:comment_id", () => {
         expect(msg).toBe("Bad request");
       });
   });
-  test(`PATCH 404: responds with an error when valid ID is passed, but does not exist in database`, () => {
+  test(`PATCH 404: Responds with an error when valid ID is passed, but does not exist in database`, () => {
     const updatedArticle = { inc_votes: 20 };
     return request(app)
       .patch("/api/comments/500")

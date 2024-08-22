@@ -14,17 +14,35 @@ exports.fetchArticleId = (article_id) => {
     });
 };
 
-exports.fetchArticles = (topic) => {
-  let queryStr = `SELECT a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url, CAST(COUNT(c.comment_id) AS INT) AS comment_count FROM articles a LEFT JOIN comments c ON a.article_id = c.article_id`;
-  let queryVal = [];
+exports.fetchArticles = (topic, limit, offset) => {
+  let queryStr = `
+    SELECT 
+      a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url, 
+      COUNT(*) OVER() AS total_count, 
+      CAST(COUNT(c.comment_id) AS INT) AS comment_count 
+    FROM 
+      articles a 
+    LEFT JOIN 
+      comments c 
+    ON 
+      a.article_id = c.article_id`;
+
+  const queryVal = [];
 
   if (topic) {
     queryStr += ` WHERE topic = $1`;
     queryVal.push(topic);
   }
 
-  queryStr += ` GROUP BY a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url`;
-  queryStr += ` ORDER BY created_at desc`;
+  queryStr += `
+    GROUP BY a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url 
+    ORDER BY a.created_at DESC 
+    LIMIT $${queryVal.length + 1}
+    OFFSET $${queryVal.length + 2}
+    `;
+
+  queryVal.push(limit);
+  queryVal.push(offset);
 
   return db.query(queryStr, queryVal).then(({ rows }) => {
     return rows;
