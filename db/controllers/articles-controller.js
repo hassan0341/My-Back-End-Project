@@ -9,6 +9,7 @@ const {
   removeCommentById,
   checkTopicExists,
   addArticles,
+  removeSingleArticle,
 } = require("../models/articles-model");
 
 exports.getSingleArticle = (request, response, next) => {
@@ -100,4 +101,13 @@ exports.postArticles = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.deleteSingleArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  removeSingleArticle(article_id)
+    .then(() => {
+      res.status(204).end();
+    })
+    .catch((err) => [next(err)]);
 };

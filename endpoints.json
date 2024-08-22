@@ -272,5 +272,19 @@
         "description": "All about the latest technology trends and innovations."
       }
     }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "Deletes an article based on the provided article ID and removes its associated comments.",
+    "parameters": {
+      "article_id": "number (required) - The ID of the article to delete."
+    },
+    "exampleRequest": {
+      "url": "/api/articles/1",
+      "method": "DELETE"
+    },
+    "exampleResponse": {
+      "status": 204,
+      "body": ""
+    }
   }
 }
