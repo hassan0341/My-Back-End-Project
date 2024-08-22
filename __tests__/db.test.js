@@ -687,6 +687,30 @@ describe("POST /api/topics", () => {
   });
 });
 
+describe("DELETE /api/articles/:article_id", () => {
+  test("DELETE 204: Responds with no content", () => {
+    return request(app).delete("/api/articles/1").expect(204);
+  });
+  test(`DELETE 404: Responds with an error when ID doesn't exist`, () => {
+    return request(app)
+      .delete("/api/articles/999")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe(`ERROR! this article doesn't exist`);
+      });
+  });
+  test(`DELETE 400: Responds with an error when ID is of invalid format`, () => {
+    return request(app)
+      .delete("/api/articles/banana")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe(`Bad request`);
+      });
+  });
+});
+
 describe("Undeclared endpoints", () => {
   test("ALL METHODS 404: Responds with an error for an endpoint not found", () => {
     return request(app)
