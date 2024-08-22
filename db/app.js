@@ -40,6 +40,8 @@ app.use((err, req, res, next) => {
     err.code === "2201X"
   ) {
     res.status(400).send({ msg: "Bad request" });
+  } else if (err.code === "23505") {
+    res.status(409).send({ msg: "Topic already exists" });
   }
   next(err);
 });

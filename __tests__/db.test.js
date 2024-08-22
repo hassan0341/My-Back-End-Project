@@ -627,6 +627,66 @@ describe("POST /api/articles", () => {
   });
 });
 
+describe("POST /api/topics", () => {
+  test("POST 201: Responds with the newly added topic", () => {
+    const newTopic = {
+      slug: "new_topic",
+      description: "This is a new topic.",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body }) => {
+        const { topic } = body;
+        expect(topic).toMatchObject(newTopic);
+        expect(topic).toHaveProperty("slug", newTopic.slug);
+        expect(topic).toHaveProperty("description", newTopic.description);
+      });
+  });
+  test("POST 400:  Responds with and error when required fields are missing", () => {
+    const newTopic = {};
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: Responds with an error when failing schema validation", () => {
+    const invalidTopic = {
+      slug: 123,
+      description: [],
+    };
+
+    return request(app)
+      .post("/api/topics")
+      .send(invalidTopic)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("POST 409: Responds with error when slug already exists", () => {
+    const existingTopic = {
+      description: "The man, the Mitch, the legend",
+      slug: "mitch",
+    };
+
+    return request(app)
+      .post("/api/topics")
+      .send(existingTopic)
+      .expect(409)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Topic already exists");
+      });
+  });
+});
+
 describe("Undeclared endpoints", () => {
   test("ALL METHODS 404: Responds with an error for an endpoint not found", () => {
     return request(app)

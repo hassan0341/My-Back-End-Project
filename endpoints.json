@@ -255,5 +255,22 @@
         }
       ]
     }
+  },
+  "POST /api/topics": {
+    "description": "Adds a new topic to the database.",
+    "requestBody": {
+      "slug": "string (required) - A unique identifier for the topic.",
+      "description": "string (required) - A description of the topic."
+    },
+    "exampleRequest": {
+      "slug": "technology",
+      "description": "All about the latest technology trends and innovations."
+    },
+    "exampleResponse": {
+      "topic": {
+        "slug": "technology",
+        "description": "All about the latest technology trends and innovations."
+      }
+    }
   }
 }
