@@ -233,7 +233,7 @@
       ]
     }
   },
-  "GET /api/articles/:article_id/comments": {
+  "GET /api/articles/:article_id/comments(pagination)": {
     "description": "Retrieves comments for a specific article with optional pagination.",
     "queryParameters": {
       "limit": "integer (optional, defaults to 10) - Limits the number of comments returned.",
