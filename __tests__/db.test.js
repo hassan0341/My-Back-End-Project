@@ -139,26 +139,53 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(comments).toHaveLength(0);
       });
   });
-  //test("GET 200: Returns comment of correct amount when limit and page query applied", () => {
-  //return request(app)
-  //  .get("/api/articles/5/comments?limit=1&p=2")
-  //  .expect(200)
-  //  .then(({ body }) => {
-  //  const expectedComment = [
-  //     {
-  //     comment_id: 15,
-  ///     votes: 1,
-  //     created_at: "2020-11-24T00:08:00.000Z",
-  //      author: "butter_bridge",
-  //      body: "I am 100% sure that we're not completely sure.",
-  //      article_id: 5,
-  //     },
-  //   ];
-  //   const { comments } = body;
-  //   expect(comments.length).toBe(1);
-  //   expect(comments).toEqual(expectedComment);
-  // });
-  // });
+  test("GET 200: Returns comment of correct amount when limit and page query applied", () => {
+    return request(app)
+      .get("/api/articles/5/comments?limit=1&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        const expectedComment = [
+          {
+            comment_id: 15,
+            votes: 1,
+            created_at: "2020-11-24T00:08:00.000Z",
+            author: "butter_bridge",
+            body: "I am 100% sure that we're not completely sure.",
+            article_id: 5,
+          },
+        ];
+        const { comments } = body;
+        expect(comments.length).toBe(1);
+        expect(comments).toEqual(expectedComment);
+      });
+  });
+  test("GET 400: Responds with an error when invalid limit or page inserted", () => {
+    return request(app)
+      .get("/api/articles/5/comments?limit=abc&p=lul")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("GET 400: Responds with an error when limit is negative", () => {
+    return request(app)
+      .get("/api/articles/5/comments?limit=-5&p=2")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("GET 400: Responds with an error when page is less than 1", () => {
+    return request(app)
+      .get("/api/articles/5/comments?limit=1&p=0")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
   test("GET 404: Responds with error then the ID is non-existent", () => {
     return request(app)
       .get("/api/articles/83/comments")

@@ -41,11 +41,13 @@ exports.getArticles = (request, response, next) => {
 
 exports.getCommentsByArticleId = (request, response, next) => {
   const { article_id } = request.params;
-  Promise.all([
-    fetchCommentsByArticleId(article_id),
-    checkArticleExists(article_id),
-  ])
-    .then(([comments]) => {
+  const { limit = 10, p = 1 } = request.query;
+  const offset = (p - 1) * limit;
+  checkArticleExists(article_id)
+    .then(() => {
+      return fetchCommentsByArticleId(article_id, limit, offset);
+    })
+    .then((comments) => {
       response.status(200).send({ comments });
     })
     .catch((err) => {

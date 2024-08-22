@@ -49,15 +49,19 @@ exports.fetchArticles = (topic, limit, offset) => {
   });
 };
 
-exports.fetchCommentsByArticleId = (article_id) => {
-  return db
-    .query(
-      "SELECT c.comment_id, c.votes, c.created_at, c.author, c.body, c.article_id FROM comments AS c WHERE article_id = $1 ORDER BY c.created_at ASC;",
-      [article_id]
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.fetchCommentsByArticleId = (article_id, limit, offset) => {
+  let queryStr = `
+    SELECT c.comment_id, c.votes, c.created_at, c.author, c.body, c.article_id 
+    FROM comments AS c 
+    WHERE article_id = $1 
+    ORDER BY c.created_at ASC 
+    LIMIT $2 OFFSET $3
+  `;
+  let queryVal = [article_id, limit, offset];
+
+  return db.query(queryStr, queryVal).then(({ rows }) => {
+    return rows;
+  });
 };
 
 exports.checkArticleExists = (article_id) => {
