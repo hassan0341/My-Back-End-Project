@@ -23,10 +23,11 @@ exports.getSingleArticle = (request, response, next) => {
 };
 
 exports.getArticles = (request, response, next) => {
-  const { topic } = request.query;
+  const { topic, limit = 10, p = 1 } = request.query;
 
-  const articlePromise = fetchArticles(topic);
+  const offset = (p - 1) * limit;
 
+  const articlePromise = fetchArticles(topic, limit, offset);
   const topicPromise = topic ? checkTopicExists(topic) : Promise.resolve();
 
   Promise.all([articlePromise, topicPromise])

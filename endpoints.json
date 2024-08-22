@@ -198,5 +198,28 @@
         "comment_count": "0"
       }
     }
+  },
+  "GET /api/articles": {
+    "description": "Fetches a list of articles with optional pagination.",
+    "queries": {
+      "limit": "integer (optional), limits the number of articles returned. Defaults to 10.",
+      "p": "integer (optional), specifies the page of articles to fetch. Defaults to 1."
+    },
+    "exampleRequest": "/api/articles?limit=5&p=2",
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 6,
+          "title": "A Journey to the West",
+          "body": "...",
+          "topic": "travel",
+          "author": "susan",
+          "created_at": "2024-04-17T17:00:46.697Z",
+          "votes": 10,
+          "article_img_url": "https://example.com/image.jpg",
+          "total_count": 50
+        }
+      ]
+    }
   }
 }
