@@ -242,6 +242,26 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("GET 200: Responds with articles sorted by votes in ascending order", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=votes&order=asc`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+
+        expect(articles).toBeSortedBy("votes", { ascending: true });
+      });
+  });
+  test("GET 200: Responds with articles sorted by comment_count in ascending order", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=comment_count&order=asc`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+
+        expect(articles).toBeSortedBy("comment_count", { ascending: true });
+      });
+  });
   test("GET 200: Responds with an empty array when there are no associated articles with the topic", () => {
     return request(app)
       .get("/api/articles?topic=paper")
@@ -296,6 +316,24 @@ describe("GET /api/articles", () => {
   test("GET 400: Responds with an error when invalid limit or page inserted", () => {
     return request(app)
       .get("/api/articles?limit=abc&p=lul")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("GET 400: Responds with an error when invalid sort_by column is provided", () => {
+    return request(app)
+      .get("/api/articles?sort_by=invalid_column")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("GET 400: Responds with an error when invalid order is provided", () => {
+    return request(app)
+      .get("/api/articles?order=invalid_order")
       .expect(400)
       .then(({ body }) => {
         const { msg } = body;

@@ -14,7 +14,13 @@ exports.fetchArticleId = (article_id) => {
     });
 };
 
-exports.fetchArticles = (topic, limit, offset) => {
+exports.fetchArticles = (
+  topic,
+  limit,
+  offset,
+  sortBy = "created_at",
+  order = "DESC"
+) => {
   let queryStr = `
     SELECT 
       a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url, 
@@ -36,7 +42,7 @@ exports.fetchArticles = (topic, limit, offset) => {
 
   queryStr += `
     GROUP BY a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url 
-    ORDER BY a.created_at DESC 
+    ORDER BY ${sortBy} ${order} 
     LIMIT $${queryVal.length + 1}
     OFFSET $${queryVal.length + 2}
     `;
