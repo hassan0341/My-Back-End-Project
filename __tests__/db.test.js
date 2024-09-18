@@ -186,7 +186,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(msg).toBe("Bad request");
       });
   });
-  test("GET 404: Responds with error then the ID is non-existent", () => {
+  test("GET 404: Responds with error when the ID is non-existent", () => {
     return request(app)
       .get("/api/articles/83/comments")
       .expect(404)
