@@ -749,6 +749,24 @@ describe("DELETE /api/articles/:article_id", () => {
   });
 });
 
+describe(`GET /api/events`, () => {
+  test("GET 200: Responds with an array of events", () => {
+    return request(app)
+      .get(`/api/events`)
+      .expect(200)
+      .then(({ body }) => {
+        const { events } = body;
+        expect(events.length).toBe(5);
+        events.forEach((event) => {
+          expect(event).toHaveProperty("event_name");
+          expect(event).toHaveProperty("image");
+          expect(event).toHaveProperty("venue");
+          expect(event).toHaveProperty("start_date");
+        });
+      });
+  });
+});
+
 describe("Undeclared endpoints", () => {
   test("ALL METHODS 404: Responds with an error for an endpoint not found", () => {
     return request(app)
