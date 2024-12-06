@@ -1,12 +1,12 @@
-const format = require('pg-format');
-const db = require('../connection');
+const format = require("pg-format");
+const db = require("../connection");
 const {
   convertTimestampToDate,
   createRef,
   formatComments,
-} = require('./utils');
+} = require("./utils");
 
-const seed = ({ topicData, userData, articleData, commentData }) => {
+const seed = ({ topicData, userData, articleData, commentData, eventData }) => {
   return db
     .query(`DROP TABLE IF EXISTS comments;`)
     .then(() => {
@@ -17,6 +17,9 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     })
     .then(() => {
       return db.query(`DROP TABLE IF EXISTS topics;`);
+    })
+    .then(() => {
+      return db.query("DROP TABLE IF EXISTS events;");
     })
     .then(() => {
       const topicsTablePromise = db.query(`
@@ -32,7 +35,20 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         avatar_url VARCHAR
       );`);
 
-      return Promise.all([topicsTablePromise, usersTablePromise]);
+      const eventsTablePromise = db.query(`
+        CREATE TABLE events (
+          event_id SERIAL PRIMARY KEY,
+          event_name VARCHAR NOT NULL,
+          image VARCHAR DEFAULT 'https://via.placeholder.com/150',
+          venue VARCHAR NOT NULL,
+          start_date TIMESTAMP NOT NULL
+        );`);
+
+      return Promise.all([
+        topicsTablePromise,
+        usersTablePromise,
+        eventsTablePromise,
+      ]);
     })
     .then(() => {
       return db.query(`
@@ -60,13 +76,13 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     })
     .then(() => {
       const insertTopicsQueryStr = format(
-        'INSERT INTO topics (slug, description) VALUES %L;',
+        "INSERT INTO topics (slug, description) VALUES %L;",
         topicData.map(({ slug, description }) => [slug, description])
       );
       const topicsPromise = db.query(insertTopicsQueryStr);
 
       const insertUsersQueryStr = format(
-        'INSERT INTO users ( username, name, avatar_url) VALUES %L;',
+        "INSERT INTO users ( username, name, avatar_url) VALUES %L;",
         userData.map(({ username, name, avatar_url }) => [
           username,
           name,
@@ -75,12 +91,24 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       );
       const usersPromise = db.query(insertUsersQueryStr);
 
-      return Promise.all([topicsPromise, usersPromise]);
+      const insertEventsQueryStr = format(
+        "INSERT INTO events (event_name, image, venue, start_date) VALUES %L;",
+        eventData.map(({ event_name, image, venue, start_date }) => [
+          event_name,
+          image,
+          venue,
+          start_date,
+        ])
+      );
+
+      const eventsPromise = db.query(insertEventsQueryStr);
+
+      return Promise.all([topicsPromise, usersPromise, eventsPromise]);
     })
     .then(() => {
       const formattedArticleData = articleData.map(convertTimestampToDate);
       const insertArticlesQueryStr = format(
-        'INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;',
+        "INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;",
         formattedArticleData.map(
           ({
             title,
@@ -97,11 +125,11 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query(insertArticlesQueryStr);
     })
     .then(({ rows: articleRows }) => {
-      const articleIdLookup = createRef(articleRows, 'title', 'article_id');
+      const articleIdLookup = createRef(articleRows, "title", "article_id");
       const formattedCommentData = formatComments(commentData, articleIdLookup);
 
       const insertCommentsQueryStr = format(
-        'INSERT INTO comments (body, author, article_id, votes, created_at) VALUES %L;',
+        "INSERT INTO comments (body, author, article_id, votes, created_at) VALUES %L;",
         formattedCommentData.map(
           ({ body, author, article_id, votes = 0, created_at }) => [
             body,

@@ -7,9 +7,12 @@ const articlesRouter = require("../routes/articles-router");
 const usersRouter = require("../routes/users-router");
 const commentsRouter = require("../routes/comments-router");
 const endpointsRouter = require("../routes/endpoints-router");
+const eventsRouter = require("../routes/events-router");
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/api/events", eventsRouter);
 
 app.use("/api/topics", topicsRouter);
 

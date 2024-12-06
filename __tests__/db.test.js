@@ -756,6 +756,7 @@ describe(`GET /api/events`, () => {
       .expect(200)
       .then(({ body }) => {
         const { events } = body;
+
         expect(events.length).toBe(5);
         events.forEach((event) => {
           expect(event).toHaveProperty("event_name");
@@ -782,6 +783,7 @@ describe("POST /api/events", () => {
       .expect(201)
       .then(({ body }) => {
         const { event } = body;
+
         expect(event).toMatchObject(newEvent);
         expect(event).toHaveProperty("event_name", newEvent.event_name);
         expect(event).toHaveProperty("image", newEvent.image);
