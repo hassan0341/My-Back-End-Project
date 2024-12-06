@@ -286,5 +286,50 @@
       "status": 204,
       "body": ""
     }
+  },
+  "GET /api/events": {
+    "description": "Fetches a list of all events from the database.",
+    "exampleResponse": {
+      "events": [
+        {
+          "event_id": 1,
+          "event_name": "Test Event",
+          "image": "https://example.com/event1.jpg",
+          "venue": "Event Venue",
+          "start_date": "2024-12-01T10:00:00"
+        },
+        {
+          "event_id": 2,
+          "event_name": "Another Event",
+          "image": "https://example.com/event2.jpg",
+          "venue": "Another Venue",
+          "start_date": "2024-12-01T10:00:00"
+        }
+      ]
+    }
+  },
+  "POST /api/events": {
+    "description": "Adds a new event to the database.",
+    "requestBody": {
+      "event_name": "string (required) - A name identifier for the event.",
+      "image": "string (required) - A URL for the event's image.",
+      "venue": "string (required) - The name of the venue for the event.",
+      "start_date": "string (required) - The start date of the event."
+    },
+    "exampleRequest": {
+      "event_name": "New Event",
+      "image": "https://example.com/new-event.jpg",
+      "venue": "New Venue",
+      "start_date": "2024-12-01T10:00:00"
+    },
+    "exampleResponse": {
+      "event": {
+        "event_id": 3,
+        "event_name": "New Event",
+        "image": "https://example.com/new-event.jpg",
+        "venue": "New Venue",
+        "start_date": "2024-12-01T10:00:00"
+      }
+    }
   }
 }
