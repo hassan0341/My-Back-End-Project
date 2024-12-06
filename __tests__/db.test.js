@@ -767,6 +767,59 @@ describe(`GET /api/events`, () => {
   });
 });
 
+describe("POST /api/events", () => {
+  test("POST 201: Responds with the newly added event", () => {
+    const newEvent = {
+      event_name: "Test event",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9z__wOskTiRgLKdz03fKhrWVnMoHloIb0NA&s",
+      venue: "Manchester Office Test",
+      start_date: "2024-12-09T10:00:00.000Z",
+    };
+    return request(app)
+      .post("/api/events")
+      .send(newEvent)
+      .expect(201)
+      .then(({ body }) => {
+        const { event } = body;
+        expect(event).toMatchObject(newEvent);
+        expect(event).toHaveProperty("event_name", newEvent.event_name);
+        expect(event).toHaveProperty("image", newEvent.image);
+        expect(event).toHaveProperty("venue", newEvent.venue);
+        expect(event).toHaveProperty("start_date", newEvent.start_date);
+      });
+  });
+  test("POST 400:  Responds with and error when required fields are missing", () => {
+    const newEvent = {};
+    return request(app)
+      .post("/api/events")
+      .send(newEvent)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: Responds with an error when failing schema validation", () => {
+    const invalidTopic = {
+      event_name: 5,
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9z__wOskTiRgLKdz03fKhrWVnMoHloIb0NA&s",
+      venue: ["Manchester Office Test"],
+      start_date: "2024-12-09T10:00:00.000Z",
+    };
+
+    return request(app)
+      .post("/api/topics")
+      .send(invalidTopic)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+});
+
 describe("Undeclared endpoints", () => {
   test("ALL METHODS 404: Responds with an error for an endpoint not found", () => {
     return request(app)
