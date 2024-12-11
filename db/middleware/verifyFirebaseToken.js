@@ -1,4 +1,4 @@
-const authorization = require("../../firebase-admin");
+const auth = require("../../firebase-admin");
 
 const verifyFirebaseToken = (req, res, next) => {
   if (process.env.NODE_ENV === "test") {
@@ -12,7 +12,7 @@ const verifyFirebaseToken = (req, res, next) => {
     return res.status(401).send({ msg: "Authorization token is required" });
   }
 
-  authorization
+  auth
     .verifyIdToken(token)
     .then((decodedToken) => {
       req.uid = decodedToken.uid;
