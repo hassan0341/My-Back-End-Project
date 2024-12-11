@@ -17,6 +17,7 @@ const verifyFirebaseToken = (req, res, next) => {
     .verifyIdToken(token)
     .then((decodedToken) => {
       req.uid = decodedToken.uid;
+      console.log("Decoded Token UID:", decodedToken.uid);
       next();
     })
     .catch(() => {

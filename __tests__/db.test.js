@@ -785,6 +785,7 @@ describe("POST /api/events", () => {
       .expect(201)
       .then(({ body }) => {
         const { event } = body;
+
         expect(event).toMatchObject({ ...newEvent, creator: "mockUsername" });
         expect(event).toHaveProperty("event_name", newEvent.event_name);
         expect(event).toHaveProperty("image", newEvent.image);
