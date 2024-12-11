@@ -1,5 +1,5 @@
 const { fetchEvents, addEvent } = require("../models/events-model");
-const { firestore } = require("../../firebase-admin");
+const { firestore, auth } = require("../../firebase-admin");
 
 exports.getEvents = (request, response, next) => {
   fetchEvents()
@@ -32,7 +32,7 @@ exports.postEvent = (req, res, next) => {
     .get()
     .then((userDoc) => {
       if (!userDoc.exists) {
-        return promise.Reject({
+        return Promise.reject({
           status: 404,
           msg: "User not found in Firestore",
         });
@@ -47,6 +47,7 @@ exports.postEvent = (req, res, next) => {
       res.status(201).send({ event });
     })
     .catch((err) => {
+      console.error("Error during event creation:", err);
       next(err);
     });
 };
