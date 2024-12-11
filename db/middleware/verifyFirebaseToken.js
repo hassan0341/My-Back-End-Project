@@ -13,7 +13,6 @@ const verifyFirebaseToken = (req, res, next) => {
   }
 
   authorization
-    .auth()
     .verifyIdToken(token)
     .then((decodedToken) => {
       req.uid = decodedToken.uid;
