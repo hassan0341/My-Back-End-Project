@@ -1,5 +1,5 @@
 const { fetchEvents, addEvent } = require("../models/events-model");
-const { firestore, auth } = require("../../firebase-admin");
+const { firestore } = require("../../firebase-admin");
 
 exports.getEvents = (request, response, next) => {
   fetchEvents()
