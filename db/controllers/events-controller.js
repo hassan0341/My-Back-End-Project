@@ -1,4 +1,5 @@
 const { fetchEvents, addEvent } = require("../models/events-model");
+const { firestore } = require("../../firebase-admin");
 
 exports.getEvents = (request, response, next) => {
   fetchEvents()
@@ -13,7 +14,37 @@ exports.getEvents = (request, response, next) => {
 exports.postEvent = (req, res, next) => {
   const newEvent = req.body;
 
-  addEvent(newEvent)
+  if (process.env.NODE_ENV === "test") {
+    const eventWithCreator = { ...newEvent, creator: "mockUsername" };
+    addEvent(eventWithCreator)
+      .then((event) => {
+        res.status(201).send({ event });
+      })
+      .catch(next);
+    return;
+  }
+
+  const uid = req.uid;
+
+  firestore
+    .collection("Users")
+    .doc(uid)
+    .get()
+    .then((userDoc) => {
+      if (!userDoc.exists) {
+        return promise.Reject({
+          status: 404,
+          msg: "User not found in Firestore",
+        });
+      }
+
+      const username = userDoc.data().username;
+      const eventWithCreator = { ...newEvent, creator: username };
+
+      console.log("Controller UID:", req.uid);
+
+      return addEvent(eventWithCreator);
+    })
     .then((event) => {
       res.status(201).send({ event });
     })

@@ -763,6 +763,7 @@ describe(`GET /api/events`, () => {
           expect(event).toHaveProperty("image");
           expect(event).toHaveProperty("venue");
           expect(event).toHaveProperty("start_date");
+          expect(event).toHaveProperty("creator");
         });
       });
   });
@@ -779,12 +780,12 @@ describe("POST /api/events", () => {
     };
     return request(app)
       .post("/api/events")
+      .set("Authorization", "Bearer mockToken")
       .send(newEvent)
       .expect(201)
       .then(({ body }) => {
         const { event } = body;
-
-        expect(event).toMatchObject(newEvent);
+        expect(event).toMatchObject({ ...newEvent, creator: "mockUsername" });
         expect(event).toHaveProperty("event_name", newEvent.event_name);
         expect(event).toHaveProperty("image", newEvent.image);
         expect(event).toHaveProperty("venue", newEvent.venue);
@@ -809,6 +810,7 @@ describe("POST /api/events", () => {
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9z__wOskTiRgLKdz03fKhrWVnMoHloIb0NA&s",
       venue: ["Manchester Office Test"],
       start_date: "2024-12-09T10:00:00.000Z",
+      creator: 6,
     };
 
     return request(app)

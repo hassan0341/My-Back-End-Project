@@ -41,7 +41,8 @@ const seed = ({ topicData, userData, articleData, commentData, eventData }) => {
           event_name VARCHAR NOT NULL,
           image VARCHAR DEFAULT 'https://via.placeholder.com/150',
           venue VARCHAR NOT NULL,
-          start_date TIMESTAMP NOT NULL
+          start_date TIMESTAMP NOT NULL,
+          creator VARCHAR NOT NULL
         );`);
 
       return Promise.all([
@@ -92,12 +93,13 @@ const seed = ({ topicData, userData, articleData, commentData, eventData }) => {
       const usersPromise = db.query(insertUsersQueryStr);
 
       const insertEventsQueryStr = format(
-        "INSERT INTO events (event_name, image, venue, start_date) VALUES %L;",
-        eventData.map(({ event_name, image, venue, start_date }) => [
+        "INSERT INTO events (event_name, image, venue, start_date, creator) VALUES %L;",
+        eventData.map(({ event_name, image, venue, start_date, creator }) => [
           event_name,
           image,
           venue,
           start_date,
+          creator,
         ])
       );
 
