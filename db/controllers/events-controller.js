@@ -41,8 +41,6 @@ exports.postEvent = (req, res, next) => {
       const username = userDoc.data().username;
       const eventWithCreator = { ...newEvent, creator: username };
 
-      console.log("Controller UID:", req.uid);
-
       return addEvent(eventWithCreator);
     })
     .then((event) => {
