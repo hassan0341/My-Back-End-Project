@@ -10,7 +10,6 @@ const verifyFirebaseToken = (req, res, next) => {
   const token = req.headers.authorization?.split("Bearer ")[1];
 
   if (!token) {
-    console.log("Authorization token is missing");
     return res.status(401).send({ msg: "Authorization token is required" });
   }
 
