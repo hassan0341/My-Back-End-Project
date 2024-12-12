@@ -1,6 +1,6 @@
 const { fetchEvents, addEvent } = require("../models/events-model");
 const { firestore } = require("../../firebase-admin");
-//console.log("Firestore:", firestore); // Log the Firestore object
+
 exports.postEvent = (req, res, next) => {
   const newEvent = req.body;
 
@@ -15,9 +15,6 @@ exports.postEvent = (req, res, next) => {
   }
 
   const uid = req.uid;
-
-  console.log("Firestore:", firestore); // This will help you verify if it's correctly initialized
-  console.log("Firestore:");
 
   firestore
     .collection("Users")
@@ -40,7 +37,6 @@ exports.postEvent = (req, res, next) => {
       res.status(201).send({ event });
     })
     .catch((err) => {
-      console.log("Error during event creation:", err);
       next(err);
     });
 };

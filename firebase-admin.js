@@ -16,7 +16,4 @@ if (!admin.apps.length) {
 const firestore = admin.firestore();
 const auth = admin.auth();
 
-//console.log("Firebase Auth:", auth);
-//console.log("Firebase Admin Initialized:", admin.apps.length);
-
 module.exports = { firestore, auth };
