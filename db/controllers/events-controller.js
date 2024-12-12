@@ -29,6 +29,7 @@ exports.postEvent = (req, res, next) => {
       }
 
       const username = userDoc.data().username;
+      console.log(username);
       const eventWithCreator = { ...newEvent, creator: username };
 
       return addEvent(eventWithCreator);
