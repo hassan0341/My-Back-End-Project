@@ -852,6 +852,42 @@ describe("GET /api/events/creator/:creator", () => {
   });
 });
 
+describe("GET /api/events/:event_id", () => {
+  test("GET 200: return event with the correct id", () => {
+    return request(app)
+      .get("/api/events/2")
+      .expect(200)
+      .then(({ body }) => {
+        const { event } = body;
+        expect(event.event_id).toBe(2);
+        expect(event).toHaveProperty("event_id");
+        expect(event).toHaveProperty("event_name");
+        expect(event).toHaveProperty("image");
+        expect(event).toHaveProperty("venue");
+        expect(event).toHaveProperty("start_date");
+        expect(event).toHaveProperty("creator");
+      });
+  });
+  test("GET 404: respond with an error for an ID that is not present", () => {
+    return request(app)
+      .get("/api/events/34566")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("error! ID not found");
+      });
+  });
+  test("GET 400: Responds with an error when passed an invalid ID type", () => {
+    return request(app)
+      .get("/api/events/mars")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad request");
+      });
+  });
+});
+
 describe("Undeclared endpoints", () => {
   test("ALL METHODS 404: Responds with an error for an endpoint not found", () => {
     return request(app)
