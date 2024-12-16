@@ -28,3 +28,17 @@ exports.addEvent = (newEvent) => {
       return rows[0];
     });
 };
+
+exports.fetchEventsByCreator = (creator) => {
+  return db
+    .query(`SELECT * FROM events WHERE creator = $1`, [creator])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "There are no events here!",
+        });
+      }
+      return rows;
+    });
+};

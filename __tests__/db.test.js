@@ -825,6 +825,33 @@ describe("POST /api/events", () => {
   });
 });
 
+describe("GET /api/events/creator/:creator", () => {
+  test("GET 200: Responds with an array of events for the specified creator", () => {
+    const creator = "Bulma";
+    return request(app)
+      .get(`/api/events/creator/${creator}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { events } = body;
+
+        expect(events.length).toBeGreaterThan(0);
+        events.forEach((event) => {
+          expect(event.creator).toBe(creator);
+        });
+      });
+  });
+  test("GET 404: Responds with an error when there are not events with that creator", () => {
+    const creator = "Staff";
+    return request(app)
+      .get(`/api/events/creator/${creator}`)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("There are no events here!");
+      });
+  });
+});
+
 describe("Undeclared endpoints", () => {
   test("ALL METHODS 404: Responds with an error for an endpoint not found", () => {
     return request(app)
