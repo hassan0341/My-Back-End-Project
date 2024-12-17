@@ -888,6 +888,15 @@ describe("GET /api/events/:event_id", () => {
   });
 });
 
+describe("DELETE /api/events/:event_id", () => {
+  test("DELETE 204: Responds with no content for ID inputted", () => {
+    return request(app)
+      .delete("/api/events/3")
+      .set("Authorization", "Bearer mockToken")
+      .expect(204);
+  });
+});
+
 describe("Undeclared endpoints", () => {
   test("ALL METHODS 404: Responds with an error for an endpoint not found", () => {
     return request(app)

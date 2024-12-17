@@ -3,6 +3,7 @@ const {
   addEvent,
   fetchEventsByCreator,
   fetchEventById,
+  removeEventById,
 } = require("../models/events-model");
 const { firestore } = require("../../firebase-admin");
 
@@ -74,6 +75,18 @@ exports.getEventById = (req, res, next) => {
   fetchEventById(event_id)
     .then((event) => {
       res.status(200).send({ event });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteEventById = (req, res, next) => {
+  const { event_id } = req.params;
+
+  removeEventById(event_id)
+    .then(() => {
+      res.sendStatus(204);
     })
     .catch((err) => {
       next(err);

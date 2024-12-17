@@ -53,3 +53,13 @@ exports.fetchEventById = (event_id) => {
       return rows[0];
     });
 };
+
+exports.removeEventById = (event_id) => {
+  return db
+    .query("DELETE FROM events WHERE event_id = $1 RETURNING*;", [event_id])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Event not found" });
+      }
+    });
+};
