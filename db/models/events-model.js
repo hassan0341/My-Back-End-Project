@@ -63,3 +63,19 @@ exports.removeEventById = (event_id) => {
       }
     });
 };
+
+exports.changeEventById = (event_id, updatedEvent) => {
+  const { event_name, venue, image, start_date } = updatedEvent;
+
+  return db
+    .query(
+      `UPDATE events 
+    SET event_name = $1, venue = $2, image = $3, start_date = $4 
+    WHERE event_id = $5
+    RETURNING *;`,
+      [event_name, venue, image, start_date, event_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};

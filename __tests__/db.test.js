@@ -897,6 +897,34 @@ describe("DELETE /api/events/:event_id", () => {
   });
 });
 
+describe("PATCH /api/events/:event_id", () => {
+  test("PATCH 200: Successfully updates event details and returns the updated event", () => {
+    const updatedEvent = {
+      event_name: "Updated Event Name",
+      venue: "Updated Venue",
+      image: "https://example.com/updated-image.jpg",
+      start_date: "2024-12-15T14:00:00.000Z",
+    };
+
+    return request(app)
+      .patch("/api/events/1")
+      .send(updatedEvent)
+      .set("Authorization", "Bearer mockToken")
+      .expect(200)
+      .then(({ body }) => {
+        const { event } = body;
+
+        expect(event).toMatchObject({
+          event_id: 1,
+          event_name: updatedEvent.event_name,
+          venue: updatedEvent.venue,
+          image: updatedEvent.image,
+          start_date: updatedEvent.start_date,
+        });
+      });
+  });
+});
+
 describe("Undeclared endpoints", () => {
   test("ALL METHODS 404: Responds with an error for an endpoint not found", () => {
     return request(app)
