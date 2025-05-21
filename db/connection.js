@@ -10,18 +10,22 @@ if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
   throw new Error("PGDATABASE or DATABASE_URL not set");
 }
 
-const config =
-  ENV === "production"
-    ? {
-        connectionString: process.env.DATABASE_URL,
-        max: 2,
-        ssl: {
-          rejectUnauthorized: false,
-        },
+let config = {};
 
-        host: new URL(process.env.DATABASE_URL).hostname,
-        port: 5432,
-      }
-    : {};
+if (ENV === "production") {
+  const params = new URL(process.env.DATABASE_URL);
+
+  config = {
+    user: params.username,
+    password: params.password,
+    host: params.hostname,
+    database: params.pathname.slice(1),
+    port: params.port,
+    max: 2,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  };
+}
 
 module.exports = new Pool(config);
