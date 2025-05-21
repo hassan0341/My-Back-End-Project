@@ -18,6 +18,9 @@ const config =
         ssl: {
           rejectUnauthorized: false,
         },
+
+        host: new URL(process.env.DATABASE_URL).hostname,
+        port: 5432,
       }
     : {};
 
